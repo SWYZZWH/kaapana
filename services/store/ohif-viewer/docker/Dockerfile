@@ -1,10 +1,17 @@
-FROM docker.io/node:23-alpine3.20 AS build
+FROM docker.io/node:18-bullseye AS build
 
 LABEL IMAGE="ohif"
 LABEL VERSION="v3.10.1"
 LABEL BUILD_IGNORE="False"
 
-RUN apk add --no-cache ca-certificates git build-base python3
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    git \
+    python3 \
+    python3-distutils \
+    python3-pip \
+    build-essential \
+  && rm -rf /var/lib/apt/lists/*
 
 
 RUN git clone https://github.com/OHIF/Viewers.git /src && cd /src && git checkout 9a4a40468fc61e8c4818ea57905239bdff47f634
