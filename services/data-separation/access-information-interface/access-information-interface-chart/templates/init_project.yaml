@@ -11,7 +11,7 @@ spec:
     spec:
         initContainers:
         - name: init
-          image: "{{ .Values.global.registry_url }}/service-checker:{{ .Values.global.kaapana_build_version  }}"
+          image: "{{ .Values.global.registry_url }}:service-checker-{{ .Values.global.kaapana_build_version  }}"
           imagePullPolicy: "{{ .Values.global.pull_policy_images }}"
           env:
             - name: WAIT
@@ -22,7 +22,7 @@ spec:
               value: "10"
         containers:
         - name: init-projects
-          image: "{{ .Values.global.registry_url }}/init-projects:{{ .Values.global.kaapana_build_version  }}"
+          image: "{{ .Values.global.registry_url }}:init-projects-{{ .Values.global.kaapana_build_version  }}"
           imagePullPolicy:  "{{ .Values.global.pull_policy_images }}"
           resources:
             requests:

@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: init-nnunet-analysis-scripts
-        image: "{{ .Values.global.registry_url }}/nnunet-analysis-scripts:{{ .Values.global.kaapana_build_version  }}"
+        image: "{{ .Values.global.registry_url }}:nnunet-analysis-scripts-{{ .Values.global.kaapana_build_version  }}"
         imagePullPolicy:  {{ .Values.global.pull_policy_jobs }}
         env:
         - name: MINIO_SERVICE

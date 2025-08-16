@@ -14,7 +14,7 @@ spec:
       # hostNetwork: true
       containers:
       - name: zenodo-models
-        image: "{{ .Values.global.registry_url }}/download-zenodo-models:{{ .Values.global.kaapana_build_version  }}"
+        image: "{{ .Values.global.registry_url }}:download-zenodo-models-{{ .Values.global.kaapana_build_version  }}"
         imagePullPolicy:  {{ .Values.global.pull_policy_jobs }}
         env:
         - name: MODEL_DIR

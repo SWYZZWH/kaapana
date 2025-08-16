@@ -61,7 +61,7 @@ spec:
     spec:
       containers:
         - name: local-registry
-          image: "{{ .Values.global.registry_url }}/local-registry:{{ .Values.global.kaapana_build_version  }}"
+          image: "{{ .Values.global.registry_url }}:local-registry-{{ .Values.global.kaapana_build_version  }}"
           env:
             - name: REGISTRY_HTTP_ADDR
               value: :5000

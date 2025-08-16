@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: slim-container
-        image: "{{  .Values.global.registry_url }}/slim:{{ .Values.global.kaapana_build_version  }}"
+        image: "{{  .Values.global.registry_url }}:slim-{{ .Values.global.kaapana_build_version  }}"
         imagePullPolicy:  {{ .Values.global.pull_policy_pods }}
         ports:
           - containerPort: 80

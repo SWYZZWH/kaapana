@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: kaapana-persistence-couchdb
-        image: "{{ .Values.global.registry_url }}/kaapana-persistence-couchdb:{{ .Values.global.kaapana_build_version  }}"
+        image: "{{ .Values.global.registry_url }}:kaapana-persistence-couchdb-{{ .Values.global.kaapana_build_version  }}"
         imagePullPolicy:  {{ .Values.global.pull_policy_pods }}
         env:
         - name: COUCHDB_USER

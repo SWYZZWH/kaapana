@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: local-registry-ui
-          image: "{{ .Values.global.registry_url }}/local-registry-ui:{{ .Values.global.kaapana_build_version  }}"
+          image: "{{ .Values.global.registry_url }}:local-registry-ui-{{ .Values.global.kaapana_build_version  }}"
           ports:
             - containerPort: 80
           env:

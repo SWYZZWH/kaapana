@@ -16,7 +16,7 @@ spec:
     spec:
       initContainers:
       - name: init-opensearch-certs
-        image: "{{ .Values.global.registry_url }}/opensearch-certs:{{ .Values.global.kaapana_build_version  }}"
+        image: "{{ .Values.global.registry_url }}:opensearch-certs-{{ .Values.global.kaapana_build_version  }}"
         imagePullPolicy:  {{ .Values.global.pull_policy_images }}
         command: ["sh", "-c", "/certs/generate-certificates.sh && cp -r /certs/* /os/certs && chown -R 1000:1000 /os"]
         volumeMounts:
@@ -38,7 +38,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: opensearch-container
-          image: "{{ .Values.global.registry_url }}/opensearch:{{ .Values.global.kaapana_build_version  }}"
+          image: "{{ .Values.global.registry_url }}:opensearch-{{ .Values.global.kaapana_build_version  }}"
           imagePullPolicy: {{ .Values.global.pull_policy_images }}
           env:
           - name: DISABLE_INSTALL_DEMO_CONFIG

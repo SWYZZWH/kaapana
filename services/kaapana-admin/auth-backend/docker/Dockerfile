@@ -1,4 +1,4 @@
-FROM local-only/base-python-cpu:latest
+FROM docker.io/zwh188222/densematrix:base-python-cpu-latest
 
 LABEL IMAGE="auth-backend"
 LABEL VERSION="0.0.0"
@@ -12,7 +12,8 @@ RUN pip install -c https://codebase.helmholtz.cloud/kaapana/constraints/-/raw/0.
 COPY ./files/*.py /kaapana/app/
 COPY ./files/*.html /kaapana/app/
 
-RUN curl -L -o opa https://openpolicyagent.org/downloads/v0.70.0/opa_linux_amd64_static
+RUN ARCH=$(uname -m); [ "$ARCH" = "aarch64" ] && OPA_ARCH=arm64 || OPA_ARCH=amd64; \
+    curl -L -o opa https://openpolicyagent.org/downloads/v0.70.0/opa_linux_${OPA_ARCH}_static
 RUN chmod 755 ./opa
 
 COPY files/bundle/ bundle/

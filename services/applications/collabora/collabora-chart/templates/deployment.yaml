@@ -16,7 +16,7 @@ spec:
         app.kubernetes.io/name: {{ .Release.Name }}
     spec:
       containers:
-      - image: "{{ .Values.global.registry_url }}/nginx:{{ .Values.global.kaapana_build_version  }}"
+      - image: "{{ .Values.global.registry_url }}:nginx-{{ .Values.global.kaapana_build_version  }}"
         imagePullPolicy: {{ .Values.global.pull_policy_images }}
         name: nginx
         ports:
@@ -33,7 +33,7 @@ spec:
           name: config
           subPath: nginx.conf
       - name: collabora
-        image: "{{ .Values.global.registry_url }}/collabora:{{ .Values.global.kaapana_build_version }}"
+        image: "{{ .Values.global.registry_url }}:collabora-{{ .Values.global.kaapana_build_version }}"
         imagePullPolicy: {{ .Values.global.pull_policy_images }}
         ports:
         - name: collabora-http
@@ -54,7 +54,7 @@ spec:
         - name: password
           value: {{ .Values.global.collabora_password }}
       - name: wopi
-        image: "{{ .Values.global.registry_url }}/kaapana-wopi:{{ .Values.global.kaapana_build_version }}"
+        image: "{{ .Values.global.registry_url }}:kaapana-wopi-{{ .Values.global.kaapana_build_version }}"
         imagePullPolicy: {{ .Values.global.pull_policy_images }}
         ports:
         - name: wopi-http

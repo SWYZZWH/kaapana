@@ -22,13 +22,13 @@ spec:
       - name: slicer-init
         securityContext:
           runAsUser: 0
-        image: "{{ .Values.global.registry_url }}/busybox:{{ .Values.global.kaapana_build_version  }}"
+        image: "{{ .Values.global.registry_url }}:busybox-{{ .Values.global.kaapana_build_version  }}"
         command: ["chown", "-R", "1000:1000", "/kaapana/minio"]
         volumeMounts:
 {{ include "dynamicVolumeMounts" $ | indent 10 }}
       containers:
       - name: minio-input
-        image: "{{ .Values.global.registry_url }}/minio-mirror:{{ .Values.global.kaapana_build_version  }}"
+        image: "{{ .Values.global.registry_url }}:minio-mirror-{{ .Values.global.kaapana_build_version  }}"
         imagePullPolicy: {{ .Values.global.pull_policy_images }}
         resources:
           requests:
@@ -51,7 +51,7 @@ spec:
         volumeMounts:
 {{ include "dynamicVolumeMounts" $ | indent 10 }}
       - name: minio-output
-        image: "{{ .Values.global.registry_url }}/minio-mirror:{{ .Values.global.kaapana_build_version  }}"
+        image: "{{ .Values.global.registry_url }}:minio-mirror-{{ .Values.global.kaapana_build_version  }}"
         imagePullPolicy: {{ .Values.global.pull_policy_images }}
         resources:
           requests:
@@ -77,7 +77,7 @@ spec:
       - name: slicer
         securityContext:
           runAsUser: 0
-        image: "{{ .Values.global.registry_url }}/slicer-workbench:{{ .Values.global.kaapana_build_version  }}"
+        image: "{{ .Values.global.registry_url }}:slicer-workbench-{{ .Values.global.kaapana_build_version  }}"
         imagePullPolicy: {{ .Values.global.pull_policy_images }}
         resources:
           requests:

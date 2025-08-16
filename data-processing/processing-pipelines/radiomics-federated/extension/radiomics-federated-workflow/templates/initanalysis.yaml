@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: init-radiomics-federated-analysis-script
-        image: "{{ .Values.global.registry_url }}/radiomics-federated-analysis:{{ .Values.global.kaapana_build_version  }}"
+        image: "{{ .Values.global.registry_url }}:radiomics-federated-analysis-{{ .Values.global.kaapana_build_version  }}"
         imagePullPolicy:  {{ .Values.global.pull_policy_jobs }}
         env:
         - name: MINIO_SERVICE

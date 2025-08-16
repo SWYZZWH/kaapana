@@ -19,7 +19,7 @@ spec:
       serviceAccountName: kaapana-kube-admin
       containers:
         - name: traefik
-          image: "{{ .Values.global.registry_url }}/traefik:{{ .Values.global.kaapana_build_version  }}"
+          image: "{{ .Values.global.registry_url }}:traefik-{{ .Values.global.kaapana_build_version  }}"
           args:
             - '--api.insecure'
             - '--accesslog'

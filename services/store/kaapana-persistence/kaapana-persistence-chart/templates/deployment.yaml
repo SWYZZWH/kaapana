@@ -17,7 +17,7 @@ spec:
     spec:
       initContainers:
         - name: init-wait-for-mongodb
-          image: "{{ .Values.global.registry_url }}/service-checker:{{ .Values.global.kaapana_build_version }}"
+          image: "{{ .Values.global.registry_url }}:service-checker-{{ .Values.global.kaapana_build_version }}"
           imagePullPolicy:  {{ .Values.global.pull_policy_pods }}
           env:
             - name: WAIT
@@ -28,13 +28,13 @@ spec:
               value: "10"
       containers:
       - name: kaapana-persistence-frontend
-        image: "{{ .Values.global.registry_url }}/kaapana-persistence-frontend:{{ .Values.global.kaapana_build_version }}"
+        image: "{{ .Values.global.registry_url }}:kaapana-persistence-frontend-{{ .Values.global.kaapana_build_version }}"
         imagePullPolicy:  {{ .Values.global.pull_policy_pods }}
         ports:
           - name: frontend-http
             containerPort: 80
       - name: kaapana-persistence-backend
-        image: "{{ .Values.global.registry_url }}/kaapana-persistence-backend:{{ .Values.global.kaapana_build_version }}"
+        image: "{{ .Values.global.registry_url }}:kaapana-persistence-backend-{{ .Values.global.kaapana_build_version }}"
         imagePullPolicy:  {{ .Values.global.pull_policy_pods }}
         env:
         - name: SECRET_KEY

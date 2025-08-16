@@ -24,14 +24,14 @@ spec:
         - name: minio-sync-permission-fix
           securityContext:
             runAsUser: 0
-          image: "{{ .Values.global.registry_url }}/busybox:{{ .Values.global.kaapana_build_version }}"
+          image: "{{ .Values.global.registry_url }}:busybox-{{ .Values.global.kaapana_build_version }}"
           command: ["chown", "-R", "{{ int .Values.global.uid }}:{{ int .Values.global.gid }}", "/mount"]
           volumeMounts:
             - name: {{ .Release.Name }}-host-path
               mountPath: /mount
       containers:
         - name: minio-sync
-          image: "{{ .Values.global.registry_url }}/minio-mirror:{{ .Values.global.kaapana_build_version }}"
+          image: "{{ .Values.global.registry_url }}:minio-mirror-{{ .Values.global.kaapana_build_version }}"
           imagePullPolicy:  {{ .Values.global.pull_policy_pods }}
           env:
           - name: LOCAL_PATH

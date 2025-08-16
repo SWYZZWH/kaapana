@@ -1,4 +1,4 @@
-FROM local-only/base-python-cpu:latest
+FROM docker.io/zwh188222/densematrix:base-python-cpu-latest
 
 LABEL IMAGE="service-checker"
 LABEL VERSION="1.1"

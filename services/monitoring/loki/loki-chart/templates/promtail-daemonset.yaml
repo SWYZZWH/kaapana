@@ -15,7 +15,7 @@ spec:
       serviceAccountName: promtail-serviceaccount
       containers:
       - name: promtail
-        image: "{{ .Values.global.registry_url }}/promtail:{{ .Values.global.kaapana_build_version  }}"
+        image: "{{ .Values.global.registry_url }}:promtail-{{ .Values.global.kaapana_build_version  }}"
         imagePullPolicy:  {{ .Values.global.pull_policy_images }}
         args:
         - -config.file=/etc/promtail/promtail.yaml

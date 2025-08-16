@@ -20,7 +20,7 @@ spec:
     spec:
       initContainers:
           - name: init-dicom-web-filter
-            image: "{{ .Values.global.registry_url }}/service-checker:{{ .Values.global.kaapana_build_version }}"
+            image: "{{ .Values.global.registry_url }}:service-checker-{{ .Values.global.kaapana_build_version }}"
             imagePullPolicy: "{{ .Values.global.pull_policy_images }}"
             env:
               - name: WAIT
@@ -31,7 +31,7 @@ spec:
                 value: "10"
       containers:
       - name: dicom-web-filter
-        image: "{{ .Values.global.registry_url }}/dicom-web-filter:{{ .Values.global.kaapana_build_version  }}"
+        image: "{{ .Values.global.registry_url }}:dicom-web-filter-{{ .Values.global.kaapana_build_version  }}"
         imagePullPolicy: "{{ .Values.global.pull_policy_images }}"
         env:
         - name: PORT

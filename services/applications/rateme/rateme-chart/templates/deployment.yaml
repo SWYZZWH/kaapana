@@ -19,7 +19,7 @@ spec:
       #   runAsUser: 1000
       containers:
       - name: rateme
-        image: "{{ .Values.global.registry_url }}/rateme:{{ .Values.global.kaapana_build_version  }}"
+        image: "{{ .Values.global.registry_url }}:rateme-{{ .Values.global.kaapana_build_version  }}"
         imagePullPolicy: {{ .Values.global.pull_policy_images }}
         resources:
           requests:
