@@ -15,11 +15,11 @@ spec:
           imagePullPolicy: "{{ .Values.global.pull_policy_images }}"
           env:
             - name: WAIT
-              value: "keycloak,keycloak-internal-service.{{  .Values.global.admin_namespace  }}.svc,443"
+              value: "keycloak,keycloak-internal-service.{{  .Values.global.admin_namespace  }}.svc,443,/auth"
             - name: DELAY
               value: "3"
             - name: TIMEOUT
-              value: "10"
+              value: "180"
         containers:
         - name: keycloak-init
           image: "{{ .Values.global.registry_url }}:keycloak-init-{{ .Values.global.kaapana_build_version  }}"

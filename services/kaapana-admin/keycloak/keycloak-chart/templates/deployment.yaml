@@ -32,10 +32,17 @@ spec:
           image: "{{ .Values.global.registry_url }}:keycloak-{{ .Values.global.kaapana_build_version  }}"
           imagePullPolicy:  {{ .Values.global.pull_policy_images }}
           env:
-          - name: KC_BOOTSTRAP_ADMIN_USERNAME 
-            value: {{ .Values.global.credentials_keycloak_admin_username }}
+          {{- if and .Values.global.credentials_keycloak_admin_username .Values.global.credentials_keycloak_admin_password }}
+          - name: KC_BOOTSTRAP_ADMIN_USERNAME
+            value: "{{ .Values.global.credentials_keycloak_admin_username }}"
           - name: KC_BOOTSTRAP_ADMIN_PASSWORD
-            value: {{ .Values.global.credentials_keycloak_admin_password }}
+            value: "{{ .Values.global.credentials_keycloak_admin_password }}"
+          {{- else }}
+          - name: KEYCLOAK_ADMIN
+            value: "{{ default "admin" .Values.global.credentials_keycloak_admin_username }}"
+          - name: KEYCLOAK_ADMIN_PASSWORD
+            value: "{{ default "Kaapana2020" .Values.global.credentials_keycloak_admin_password }}"
+          {{- end }}
           - name: KC_DB 
             value: "postgres"
           - name: KC_DB_URL 
@@ -76,6 +83,8 @@ spec:
           - "start"
           - "--hostname"
           - "https://{{ .Values.global.hostname}}:{{ .Values.global.https_port }}/auth"
+          - "--hostname-strict"
+          - "false"
           - "--proxy-headers"
           - "xforwarded"
           - "--http-enabled"
