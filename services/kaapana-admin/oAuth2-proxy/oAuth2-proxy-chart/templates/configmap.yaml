@@ -36,6 +36,11 @@ data:
     provider = "keycloak-oidc"
     client_id = "kaapana"
     client_secret = "{{ .Values.global.oidc_client_secret }}"
+    {{- if ne (.Values.global.https_port | default "443") "443" }}
+    redirect_url = "https://{{ required "A valid hostname (or fqdn) is required!" $.Values.global.hostname }}:{{ .Values.global.https_port }}/oauth2/callback"
+    {{- else }}
+    redirect_url = "https://{{ required "A valid hostname (or fqdn) is required!" $.Values.global.hostname }}/oauth2/callback"
+    {{- end }}
     cookie_secret = "{{ randAlphaNum 32 | b64enc }}"
 
     # TLS and SSL settings
@@ -52,16 +57,24 @@ data:
 
     # Additional flags
     custom_templates_dir = "/usr/share/oauth2-proxy"
-    upstreams = ["https://traefik-{{ .Values.global.instance_uid | default 0 }}.{{ .Values.global.helm_namespace }}.svc:{{ .Values.global.https_port }}"]
+    upstreams = ["http://ohif-service.{{ .Values.global.services_namespace }}.svc:80"]
     skip_provider_button = true
     skip_oidc_discovery = true
     skip_jwt_bearer_tokens = true
     insecure_oidc_allow_unverified_email = true
     email_domains = ["*"]
     skip_auth_routes = [
-      "^/auth/*",
-      "^/kaapana-backend/remote/*",
-      "^/oauth2/metrics"
+      '^/auth/.*',
+      '^/oauth2/callback$',
+      '^/oauth2/metrics',
+      '^/.*\\.(js|css|png|jpg|jpeg|svg|ico|woff2?|ttf|map)$',
+      '^/(dicom-web|dicom-web-filter)/.*',
+      '^/(assets|static)/.*',
+      '^/favicon(\\.ico|-16x16\\.png|-32x32\\.png)$',
+      '^/init-service-worker\\.js$',
+      '^/app-config\\.js$',
+      '^/ohif/.*\\.(js|css|png|jpg|jpeg|svg|ico|woff2?|ttf|map)$',
+      '^/ohif/(assets|static|favicon|manifest|init-service-worker\\.js).*'
     ]
     pass_access_token = true
     reverse_proxy = true

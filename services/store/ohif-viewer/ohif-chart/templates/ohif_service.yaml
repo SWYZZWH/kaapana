@@ -19,7 +19,7 @@ metadata:
   name: ohif-ingress-ip
   namespace: "{{ .Values.global.services_namespace }}"
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.entrypoints: web
     kubernetes.io/ingress.global-static-ip-name: "kubernetes-ingress"
 spec:
   rules:
