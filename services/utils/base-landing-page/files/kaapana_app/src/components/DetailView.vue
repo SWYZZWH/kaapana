@@ -62,7 +62,7 @@ export default {
       this.$store.dispatch("resetDetailViewItem");
     },
     openInOHIFViewer() {
-      window.open(`/ohif/viewer?StudyInstanceUIDs=${this.studyInstanceUID}`);
+      window.open(`${this.ohifBase}/viewer?StudyInstanceUIDs=${this.studyInstanceUID}`);
     },
   },
   watch: {
@@ -74,10 +74,14 @@ export default {
     this.getDicomData();
   },
   computed: {
+    ohifBase() {
+      const base = process.env.VUE_APP_OHIF_BASE || '/ohif/';
+      return base.replace(/\/+$/, '');
+    },
     iFrameURL() {
       return (
-        "/ohif/viewer?StudyInstanceUIDs=" +
-        this.studyInstanceUID +
+        `${this.ohifBase}/viewer?StudyInstanceUIDs=` +
+        this.seriesInstanceUID +
         "&initialSeriesInstanceUID=" +
         this.seriesInstanceUID +
         "&mode=iframe"

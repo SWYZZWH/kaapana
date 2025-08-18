@@ -1,0 +1,7 @@
+{
+  "preferredUsername": "demo",
+  "user": "demo",
+  "groups": ["role:admin", "/kaapana_admin"]
+}
+
+
