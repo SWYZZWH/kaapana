@@ -11,13 +11,13 @@
           <v-list-item class="px-2 pb-2">
             <router-link to="/" class="d-inline-block">
               <v-list-item-avatar>
-                <v-img src="/favicon.ico" title="Kaapana"></v-img>
+                <v-img src="@/assets/img/logo.png" title="凝矩科技"></v-img>
               </v-list-item-avatar>
             </router-link>
 
             <v-spacer></v-spacer>
 
-            <v-btn icon @click.stop="mini = !mini" title="Collapse Sidebar">
+            <v-btn icon @click.stop="mini = !mini" :title="$t('common.collapseSidebar')">
               <v-icon>mdi-dock-left</v-icon>
             </v-btn>
             <About/>
@@ -27,7 +27,7 @@
               bottom left offset-y
             >
               <template v-slot:activator="{ on }">
-                <v-btn v-on="on" icon="icon" title="User">
+                <v-btn v-on="on" icon="icon" :title="$t('common.user')">
                   <v-icon>mdi-account-circle</v-icon>
                 </v-btn>
               </template>
@@ -39,14 +39,14 @@
                     </v-list-item-avatar>
                     <v-list-item-content>
                       <v-list-item-title>{{ currentUser.username }}</v-list-item-title>
-                      <v-list-item-subtitle>Welcome back!</v-list-item-subtitle>
+                      <v-list-item-subtitle>{{ $t('common.welcomeBack') }}</v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
                 </v-list>
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn depressed block @click="logout()">
-                    Log Out
+                    {{ $t('common.logout') }}
                     <v-icon right>mdi-exit-to-app</v-icon>
                   </v-btn>
                 </v-card-actions>
@@ -95,10 +95,10 @@
                   prepend-icon="mdi-card-multiple"
                   v-model="selectedProject"
                   :items="availableProjects"
-                  title="Select a project"
+                  :title="$t('common.selectProject')"
                   item-text="name"
                   item-value="id"
-                  label="Project"
+                  :label="$t('common.project')"
                   return-object
                   @change="update_selected_project"
                 >
@@ -114,12 +114,12 @@
               <v-icon>mdi-home</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>Home</v-list-item-title>
+              <v-list-item-title>{{ $t('common.home') }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-group prepend-icon="mdi-gamepad-variant" :value="true">
             <template v-slot:activator>
-              <v-list-item-title>Workflows</v-list-item-title>
+              <v-list-item-title>{{ $t('common.workflows') }}</v-list-item-title>
             </template>
             <!-- WORKFLOWS -->
             <v-list-item dense
@@ -167,7 +167,7 @@
               <v-icon>mdi-puzzle</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title>Extensions</v-list-item-title>
+              <v-list-item-title>{{ $t('common.extensions') }}</v-list-item-title>
             </v-list-item-content>
             <v-list-item-icon></v-list-item-icon>
           </v-list-item>
@@ -177,12 +177,12 @@
         <template v-slot:append>
           <v-container>
             <v-row class="pr-2 pb-2" v-if="!mini">
-              <v-btn text href="/docs/faq_root.html" target="_blank" title="Help">
+              <v-btn text href="/docs/faq_root.html" target="_blank" :title="$t('common.help')">
                 <v-icon left size="24">mdi-help-circle</v-icon>
-                Help
+                {{ $t('common.help') }}
               </v-btn>
               <v-spacer></v-spacer>
-              <v-btn icon @click="logout()" title="Log out">
+              <v-btn icon @click="logout()" :title="$t('common.logout')">
                 <v-icon>mdi-exit-to-app</v-icon>
               </v-btn>
             </v-row>
@@ -190,7 +190,7 @@
               &copy; DKFZ 2018 - DKFZ 2024
             </v-row> -->
             <v-row class="pa-2" v-else>
-              <v-btn icon href="/docs/faq_root.html" target="_blank" title="Help">
+              <v-btn icon href="/docs/faq_root.html" target="_blank" :title="$t('common.help')">
                 <v-icon >mdi-help-circle</v-icon>
               </v-btn>
             </v-row>
@@ -293,14 +293,22 @@ export default Vue.extend({
       this.settings = JSON.parse(localStorage["settings"]);
       this.$vuetify.theme.dark = this.settings["darkMode"];
     },
-    settingsResponseToObject(response: any[]) {
-      let converted: Object = {};
-      response.forEach((item) => {
-        converted[item.key as keyof Object] = item.value;
-      });
+    settingsResponseToObject(response: any) {
+      const converted: Record<string, any> = {};
+      if (Array.isArray(response)) {
+        response.forEach((item) => {
+          if (item && item.key !== undefined) {
+            converted[item.key] = item.value;
+          }
+        });
+      }
       return converted;
     },
     getSettingsFromDb() {
+      if (process.env.VUE_APP_DISABLE_SETTINGS === '1') {
+        localStorage["settings"] = JSON.stringify(defaultSettings);
+        return;
+      }
       kaapanaApiService
         .kaapanaApiGet("/settings")
         .then((response: any) => {
@@ -401,18 +409,20 @@ export default Vue.extend({
     this.updateSettings();
   },
   mounted() {
-    httpClient
-      .get("/kaapana-backend/get-traefik-routes")
-      .then((response: { data: {} }) => {
-        this.federatedBackendAvailable = kaapanaApiService.checkUrl(
-          response.data,
-          "/kaapana-backend"
-        );
-      })
-      .catch((error: any) => {
-        this.failedToFetchTraefik = true;
-        console.log("Something went wrong with traefik", error);
-      });
+    if (process.env.VUE_APP_DISABLE_TRAEFIK_CHECK !== '1') {
+      httpClient
+        .get("/kaapana-backend/get-traefik-routes")
+        .then((response: { data: {} }) => {
+          this.federatedBackendAvailable = kaapanaApiService.checkUrl(
+            response.data,
+            "/kaapana-backend"
+          );
+        })
+        .catch((error: any) => {
+          this.failedToFetchTraefik = true;
+          console.log("Something went wrong with traefik", error);
+        });
+    }
   },
 });
 </script>

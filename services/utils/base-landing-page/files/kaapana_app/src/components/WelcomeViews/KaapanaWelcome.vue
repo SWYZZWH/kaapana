@@ -7,13 +7,13 @@
           v-layout
             v-flex(xs12, py-1)
               div(style={'margin': '9px', 'margin-top': '10px'})
-                img(src='../../assets/img/kaapana.png', alt='Vuetify', width='35%')
+                img(src='../../assets/img/logo.png', alt='Logo', width='35%')
     v-flex.text-xs-left(sm4 d-flex)
       v-card(width='100%')
         v-card-text.text-xs-left()
           div
-            h2 Welcome {{ currentUser.username }}!
-            p Join us on Slack or drop us an email!
+            h2 {{$t('common.welcomeBack')}} {{ currentUser.username }}!
+            p {{$t('common.help')}} / Slack / Email
             hr.my-2
         v-card-text
           v-layout(row='', wrap='')

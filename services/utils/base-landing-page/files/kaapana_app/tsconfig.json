@@ -19,6 +19,7 @@
       "mocha",
       "chai",
       "vuetify",
+      "vue-i18n"
     ],
     "paths": {
       "@/*": [

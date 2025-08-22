@@ -4,12 +4,13 @@ import httpClient from './httpClient'
 
   const helmApiPost = (subUrl: any, payload: any, timeout: any = 10000) => {
     return new Promise((resolve, reject) => {
-      httpClient.defaults.timeout = timeout
-      httpClient.post('/kube-helm-api' + subUrl, payload).then((response: any) => {
+      // Use a per-request timeout to avoid mutating the global axios default,
+      // which can unintentionally shorten timeouts for unrelated requests.
+      httpClient.post('/kube-helm-api' + subUrl, payload, { timeout }).then((response: any) => {
         console.log(response)
         resolve(response)
       }).catch((error: any) => {
-        console.log('Failed: ' + error.response.data)
+        console.log('Failed: ' + (error?.response?.data ?? error?.message ?? 'unknown error'))
         reject(error)
       })
     })
@@ -17,11 +18,11 @@ import httpClient from './httpClient'
 
   const helmApiGet = (subUrl: any, params: any, timeout: any = 10000) => {
     return new Promise((resolve, reject) => {
-      httpClient.defaults.timeout = timeout
-      httpClient.get('/kube-helm-api' + subUrl, { params }).then((response: any) => {
+      // Use per-request timeout to avoid global side effects
+      httpClient.get('/kube-helm-api' + subUrl, { params, timeout }).then((response: any) => {
         resolve(response)
       }).catch((error: any) => {
-        console.log('Failed: ' + error.response.data)
+        console.log('Failed: ' + (error?.response?.data ?? error?.message ?? 'unknown error'))
         reject(error)
       })
     })
@@ -29,11 +30,18 @@ import httpClient from './httpClient'
 
   const getPolicyData = () => {
     return new Promise((resolve, reject) => {
+      if (process.env.VUE_APP_DISABLE_OPA === '1') {
+        // allow-all fallback
+        resolve({ endpoints_per_role: { admin: [{ path: '.*', methods: ['GET','POST','PUT','DELETE'] }] } })
+        return
+      }
       httpClient.get('/kaapana-backend/open-policy-data').then((response: { data: any }) => {
         const policyData = response.data
         resolve(policyData)
       }).catch((error:any) => {
         console.log('Something went wrong with open policy agent ', error)
+        // fallback to allow-all if OPA is down
+        resolve({ endpoints_per_role: { admin: [{ path: '.*', methods: ['GET','POST','PUT','DELETE'] }] } })
       })
     })
   }
@@ -61,6 +69,10 @@ import httpClient from './httpClient'
         }
         
         
+        if (process.env.VUE_APP_DISABLE_TRAEFIK_CHECK === '1') {
+          resolve(externalWebpages)
+          return
+        }
         //// The following section checks, if the routes listed in the config file externalWebpages.json is also available, enabled and correctly configured in traefik.
         //// I.E. if there is a service in traefik that routes to the configured endpoint
         httpClient.get('/kaapana-backend/get-traefik-routes').then((response: { data: {} }) => {

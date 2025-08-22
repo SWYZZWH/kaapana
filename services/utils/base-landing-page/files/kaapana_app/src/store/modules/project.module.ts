@@ -28,12 +28,21 @@ const getters = {
 const actions = {
   [GET_SELECTED_PROJECT](context: any) {
     return new Promise((resolve: any) => {
+      if (process.env.VUE_APP_DISABLE_AII === '1') {
+        const defaultProject = { id: 'default', name: 'Default Project' } as any
+        context.dispatch(UPDATE_SELECTED_PROJECT, defaultProject)
+        context.commit(SET_AVAILABLE_PROJECTS, [defaultProject])
+        resolve(true)
+        return
+      }
       httpClient.get("/aii/users/current").then((userResponse: any) => {
-        const current_user: any = userResponse.data;
+        const current_user: any = typeof userResponse.data === 'object' && userResponse.data
+          ? userResponse.data
+          : { id: 'unknown', realm_roles: [], groups: [] };
 
         // set the project fetch url for normal user and admin user
         let get_users_projects_url = "/aii/users/" + current_user.id + "/projects"
-        if (current_user.realm_roles.includes("admin")) {
+        if (Array.isArray(current_user.realm_roles) && current_user.realm_roles.includes("admin")) {
           get_users_projects_url = "/aii/projects"
         }
 
@@ -75,6 +84,12 @@ const actions = {
   },
   [UPDATE_AVAILABLE_PROJECTS](context: any) {
     return new Promise((resolve: any) => {
+      if (process.env.VUE_APP_DISABLE_AII === '1') {
+        const defaultProject = { id: 'default', name: 'Default Project' } as any
+        context.commit(SET_AVAILABLE_PROJECTS, [defaultProject])
+        resolve(true)
+        return
+      }
       httpClient.get("/aii/users/current").then((response: any) => {
         const current_user: any = response.data
         const get_users_projects_url = "/aii/users/" + current_user.id + "/projects"

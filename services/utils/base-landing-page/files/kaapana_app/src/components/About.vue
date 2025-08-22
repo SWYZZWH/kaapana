@@ -2,7 +2,7 @@
     <div>
       <v-dialog v-model="dialog" width="50vw">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn icon v-bind="attrs" v-on="on" title="About Platform">
+          <v-btn icon v-bind="attrs" v-on="on" title="关于平台">
             <v-icon>mdi-information-outline</v-icon>
           </v-btn>
         </template>
@@ -10,7 +10,7 @@
         <v-card>
             <v-container fluid>
               <v-card-title class="text-h5">
-                About Kaapana Platform
+                关于凝矩科技平台
               </v-card-title>
               <v-card-text class="pt-2 pb-8">
                 <div class="text-h6">

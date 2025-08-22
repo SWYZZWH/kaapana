@@ -109,7 +109,8 @@ export default Vue.extend({
     },
     computed: {
         groupedNotifications(): Record<string, Notification[]> {
-            return this.notifications.reduce((groups, notif) => {
+            const list = Array.isArray(this.notifications) ? this.notifications : []
+            return list.reduce((groups, notif) => {
                 const key = notif.topic || 'Other'
                 if (!groups[key]) groups[key] = []
                 groups[key].push(notif)
@@ -121,6 +122,9 @@ export default Vue.extend({
         },
     },
     mounted() {
+        if (typeof process !== 'undefined' && process.env && process.env.VUE_APP_DISABLE_NOTIFICATIONS === '1') {
+            return;
+        }
         this.notificationws = new NotificationWebsocket()
         this.notificationws.onMessage((data: NotificationEvent) => {
             console.log(data);

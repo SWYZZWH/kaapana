@@ -51,5 +51,12 @@ export function checkRoleAuthR(policyData, endpoint, role, method = "GET" ) {
 
 export function checkAuthR(policyData, endpoint, user) {
   "Check if the user has a role that authorizes him to access the requested endpoint";
+  // If OPA is disabled or no policy data is present, allow by default for demo/dev.
+  if (process.env.VUE_APP_DISABLE_OPA === '1') {
+    return true;
+  }
+  if (!policyData || !policyData.endpoints_per_role) {
+    return true;
+  }
   return user.roles.some((role) => checkRoleAuthR(policyData, endpoint, role))
 }

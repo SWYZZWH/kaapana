@@ -4,7 +4,7 @@ import store from '../store/index';
 const httpClient = axios.create({
   headers: {
   },
-  timeout: 10000
+  timeout: 30000
 });
 
 const httpClientWithoutTimeout = axios.create({

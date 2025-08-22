@@ -25,6 +25,9 @@ export interface NotificationEvent {
 }
 
 export const fetch_notifications = async (): Promise<Notification[]> => {
+    if (process.env.VUE_APP_DISABLE_NOTIFICATIONS === '1') {
+      return [];
+    }
     const response = await httpClient.get(`${KAAPANA_NOTIFICATION_ENDPOINT}/v1`);
     return response.data;
 }
@@ -37,6 +40,11 @@ export class NotificationWebsocket {
     private connection: WebSocket;
 
     constructor(notifcations_endpoint: string = KAAPANA_NOTIFICATION_ENDPOINT) {
+        if (process.env.VUE_APP_DISABLE_NOTIFICATIONS === '1') {
+          // create a no-op placeholder
+          this.connection = undefined as unknown as WebSocket;
+          return;
+        }
         const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const wsHost = window.location.host;
         const wsPath = `${notifcations_endpoint}/ws`;
@@ -51,6 +59,7 @@ export class NotificationWebsocket {
     }
 
     public onMessage(handler: (event: NotificationEvent) => void): void {
+      if (!this.connection) return;
       this.connection.addEventListener('message',
         (e: MessageEvent) => {
           const parsed = JSON.parse(e.data);
@@ -60,14 +69,17 @@ export class NotificationWebsocket {
     }
 
     public onOpen(handler: (ev: Event) => void): void {
+      if (!this.connection) return;
       this.connection.addEventListener('open', handler);
     }
 
     public onClose(handler: (ev: CloseEvent) => void): void {
+      if (!this.connection) return;
       this.connection.addEventListener('close', handler);
     }
 
     public onError(handler: (ev: Event) => void): void {
+      if (!this.connection) return;
       this.connection.addEventListener('error', handler);
     }
 }

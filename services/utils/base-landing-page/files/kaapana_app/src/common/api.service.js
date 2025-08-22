@@ -142,6 +142,9 @@ const getAggregatedSeriesNum = async (data) => {
 
 const loadFieldNames = async () => {
   try {
+    if (process.env.VUE_APP_DISABLE_DATASET === '1') {
+      return { data: [] };
+    }
     return await httpClient.get(
       KAAPANA_BACKEND_ENDPOINT + "dataset/field_names"
     );
@@ -186,18 +189,21 @@ const updateTags = async (data) => {
 };
 
 const loadDashboard = async (seriesInstanceUIDs, fields, query = {}) => {
-  return (
-    await httpClient.post(KAAPANA_BACKEND_ENDPOINT + "dataset/dashboard", {
-      series_instance_uids: seriesInstanceUIDs,
-      names: fields,
-      query: query
-    })
-  ).data;
+  if (process.env.VUE_APP_DISABLE_DATASET === '1') {
+    return { charts: [], summary: {} };
+  }
+  return (await httpClient.post(KAAPANA_BACKEND_ENDPOINT + "dataset/dashboard", {
+    series_instance_uids: seriesInstanceUIDs,
+    names: fields,
+    query: query
+  })).data;
 };
 
 const loadDicomTagMapping = async () => {
-  return (await httpClient.get(KAAPANA_BACKEND_ENDPOINT + "dataset/fields"))
-    .data;
+  if (process.env.VUE_APP_DISABLE_DATASET === '1') {
+    return {};
+  }
+  return (await httpClient.get(KAAPANA_BACKEND_ENDPOINT + "dataset/fields")).data;
 };
 
 const downloadDatasets = async (concatenatedSeriesUIDs) => {
@@ -257,6 +263,9 @@ const downloadDatasets = async (concatenatedSeriesUIDs) => {
 const fetchProjects = async () => {
   const currentUser = store.getters.currentUser
   try {
+    if (typeof process !== 'undefined' && process.env && process.env.VUE_APP_DISABLE_AII === '1') {
+      return [{ id: 'default', name: 'Default Project' }];
+    }
     if (currentUser.roles.includes("admin")) {
       return (await httpClient.get("/aii/projects")).data;
     } else {
